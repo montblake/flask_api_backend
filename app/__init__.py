@@ -13,6 +13,6 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 moment= Moment(app)
-cors = CORS(app, resources={r"/episodes/*": {"origins": "*"}})
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 from app import routes, models

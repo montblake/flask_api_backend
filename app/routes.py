@@ -7,7 +7,11 @@ from datetime import datetime
 from flask import jsonify
 from flask_cors import cross_origin
 
-
+@app.after_request
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    return response
 
 # Root Route
 @app.route('/')
@@ -35,22 +39,27 @@ def episodes():
             ep_list.append(new_ep)
         return jsonify(ep_list)
     elif request.method == 'POST':
-        ep = Episode(title=request.form['title'], plot=request.form['plot'], user_id=request.form['user_id'])
+        print("Request received. Processing...")
+        req = request.get_json()
+        print(req['title'])
+        ep = Episode(title=req['title'], plot=req['plot'], user_id=req['user_id'])
         db.session.add(ep)
         db.session.commit()
+        print("Episode Added")
     return redirect(url_for('episodes'))
 
-@app.route('/episodes/<id>', methods=['DELETE'])
-def episode_delete(id):
-    episode = Episode.query.get(id)
-    db.session.delete(episode)
-    db.session.commit()
-    return redirect(url_for('episodes'))
-
-# @app.route('/episodes/<int:id>/delete')
-# # @cross_origin
-# def delete_episode(id):
-#     episode = Episode.query.filter_by(id=id).first()
+# @app.route('/episodes/<id>', methods=['DELETE'])
+# def episode_delete(id):
+#     episode = Episode.query.get(id)
 #     db.session.delete(episode)
 #     db.session.commit()
 #     return redirect(url_for('episodes'))
+
+@app.route('/episodes/<int:id>/delete')
+# @cross_origin
+def delete_episode(id):
+    print('HERE I AM DELETING>>>')
+    episode = Episode.query.filter_by(id=id).first()
+    db.session.delete(episode)
+    db.session.commit()
+    return redirect(url_for('episodes'))
