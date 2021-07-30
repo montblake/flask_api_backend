@@ -39,3 +39,18 @@ def episodes():
         db.session.add(ep)
         db.session.commit()
     return redirect(url_for('episodes'))
+
+@app.route('/episodes/<id>', methods=['DELETE'])
+def episode_delete(id):
+    episode = Episode.query.get(id)
+    db.session.delete(episode)
+    db.session.commit()
+    return redirect(url_for('episodes'))
+
+# @app.route('/episodes/<int:id>/delete')
+# # @cross_origin
+# def delete_episode(id):
+#     episode = Episode.query.filter_by(id=id).first()
+#     db.session.delete(episode)
+#     db.session.commit()
+#     return redirect(url_for('episodes'))
