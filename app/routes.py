@@ -22,13 +22,20 @@ def index():
 @app.route('/episodes', methods=['GET', 'POST'])
 @cross_origin()
 def episodes():
+    if request.method == 'GET':
         episodes = Episode.query.order_by(Episode.timestamp.desc()).all()
         ep_list = []
         for episode in episodes:
             new_ep = {
                 'title': episode.title,
                 'plot': episode.plot,
-                'writer': episode.writer.username
+                'writer': episode.writer.username,
+                'episode_id': episode.id
             }
             ep_list.append(new_ep)
         return jsonify(ep_list)
+    elif request.method == 'POST':
+        ep = Episode(title=request.form['title'], plot=request.form['plot'], user_id=request.form['user_id'])
+        db.session.add(ep)
+        db.session.commit()
+    return redirect(url_for('episodes'))
