@@ -7,11 +7,11 @@ from datetime import datetime
 from flask_cors import CORS, cross_origin
 
 
-@app.after_request
-def after_request(response):
-    header = response.headers
-    header['Access-Control-Allow-Origin'] = '*'
-    return response
+# @app.before_request
+# def before_request(response):
+#     header = response.headers
+#     header['Access-Control-Allow-Origin'] = '*'
+#     return response
 
 
 @app.route('/')
@@ -21,7 +21,6 @@ def index():
 
 
 @app.route('/episodes', methods=['GET', 'POST'])
-@cross_origin()
 def episodes():
     if request.method == 'GET':
         episodes = Episode.query.order_by(Episode.timestamp.desc()).all()
@@ -47,7 +46,6 @@ def episodes():
 
 
 @app.route('/episodes/<int:id>/delete')
-# @cross_origin
 def delete_episode(id):
     print('HERE I AM DELETING>>>')
     episode = Episode.query.filter_by(id=id).first()
@@ -70,14 +68,18 @@ def login():
     if form.validate_on_submit():
         print("I'm inside the validation function")
         user = User.query.filter_by(username=form.username.data).first()
+        print(user)
         if user is None or not user.check_password(form.password.data):
             hash = user.password_hash
             print(hash)
             print("That's an invalid username or password!!!!!")
             return 'try entering your information again'
         login_user(user, remember=form.remember_me.data)
-        return "you are all set. head on in..."
-    return 'please submit your information again'
+        print("current_user:", current_user.username)
+        return {"message": "logged in", "username":  current_user.username, "user_id": current_user.id }
+    print('please submit your information again')
+    return {"message": "try again"}
+    
 
 
 @app.route('/logout')
