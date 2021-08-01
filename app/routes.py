@@ -1,11 +1,11 @@
 from app import app, db
-from flask import render_template, flash, redirect, url_for, request
+from flask import flash, redirect, url_for, request, jsonify
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, EpisodeForm, EditEpisodeForm
-from flask_login import current_user, login_user, logout_user,login_required
+from flask_login import current_user, login_user, logout_user, login_required, login_manager
 from app.models import User, Episode
 from datetime import datetime
-from flask import jsonify
-from flask_cors import cross_origin
+from flask_cors import CORS, cross_origin
+
 
 @app.after_request
 def after_request(response):
@@ -13,14 +13,11 @@ def after_request(response):
     header['Access-Control-Allow-Origin'] = '*'
     return response
 
-# Root Route
+
 @app.route('/')
 @app.route('/index')
 def index():
-    return {
-        "text": "stuff and nonsense. And then, more stuff.",
-        "author": "Stuffy McStufferson"
-    }
+    return "This is the Index."
 
 
 @app.route('/episodes', methods=['GET', 'POST'])
@@ -48,12 +45,6 @@ def episodes():
         print("Episode Added")
     return redirect(url_for('episodes'))
 
-# @app.route('/episodes/<id>', methods=['DELETE'])
-# def episode_delete(id):
-#     episode = Episode.query.get(id)
-#     db.session.delete(episode)
-#     db.session.commit()
-#     return redirect(url_for('episodes'))
 
 @app.route('/episodes/<int:id>/delete')
 # @cross_origin
@@ -63,3 +54,54 @@ def delete_episode(id):
     db.session.delete(episode)
     db.session.commit()
     return redirect(url_for('episodes'))
+
+
+#########################################################################
+#  USER REGISTRATION/LOGIN/LOGOUT amd WRITERS
+#########################################################################
+@app.route('/login', methods=['POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    # form = LoginForm(meta={'csrf': True})
+    form = LoginForm(meta={'csrf': False})
+    data = request.json
+    print("Data 1:", data)
+    if form.validate_on_submit():
+        print("I'm inside the validation function")
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            hash = user.password_hash
+            print(hash)
+            print("That's an invalid username or password!!!!!")
+            return 'try entering your information again'
+        login_user(user, remember=form.remember_me.data)
+        return "you are all set. head on in..."
+    return 'please submit your information again'
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    print('logged out')
+    print('current user?', current_user.is_authenticated)
+    return "now you're logged out"
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return 'you are registered AND logged in. Go to the index.'
+    form = RegistrationForm(meta={'csrf': False} )
+    data = request.json
+    print("Data 1:", data)
+    print("Form:", form.data)
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        print('This is the password being hashed:',form.password.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        print('congratulations!! you are now a registered user!!!!')
+        return "you are registered. now, go login"
+    return "please check your information and try again"

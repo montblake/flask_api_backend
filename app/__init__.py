@@ -11,8 +11,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
-login.login_view = 'login'
 moment= Moment(app)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
 
-from app import routes, models
+from app import routes, models, forms
