@@ -1,8 +1,8 @@
-"""user and episode tables
+"""empty message
 
-Revision ID: a29bda5189f6
+Revision ID: 398ca4f6570e
 Revises: 
-Create Date: 2021-07-29 14:02:28.387410
+Create Date: 2021-08-01 11:09:20.970757
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a29bda5189f6'
+revision = '398ca4f6570e'
 down_revision = None
 branch_labels = None
 depends_on = None
