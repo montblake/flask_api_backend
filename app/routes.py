@@ -7,13 +7,6 @@ from datetime import datetime
 from flask_cors import CORS, cross_origin
 
 
-# @app.before_request
-# def before_request(response):
-#     header = response.headers
-#     header['Access-Control-Allow-Origin'] = '*'
-#     return response
-
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -33,7 +26,16 @@ def episodes():
                 'episode_id': episode.id
             }
             ep_list.append(new_ep)
-        return jsonify(ep_list)
+        if current_user.is_authenticated:
+            return {
+                "current_user": current_user.username,
+                "user_id": current_user.user_id,
+                "episodes": ep_list
+            }
+        else:
+            return {
+                "episodes": ep_list
+            }
     elif request.method == 'POST':
         print("Request received. Processing...")
         req = request.get_json()
@@ -85,9 +87,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    print('logged out')
-    print('current user?', current_user.is_authenticated)
-    return "now you're logged out"
+    return {"username": "", "user_id": ""}
 
 
 @app.route('/register', methods=['GET', 'POST'])
