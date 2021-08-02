@@ -10,8 +10,11 @@ from flask_cors import CORS, cross_origin
 @app.route('/')
 @app.route('/index')
 def index():
-    return "This is the Index."
-
+    if (current_user.is_authenticated):
+        return {"username": current_user.username, "user_id": current_user.id}
+    else:
+        return {"message": "welcome"}
+    
 
 @app.route('/episodes', methods=['GET', 'POST'])
 def episodes():
@@ -23,6 +26,7 @@ def episodes():
                 'title': episode.title,
                 'plot': episode.plot,
                 'writer': episode.writer.username,
+                'writer_id': episode.writer.id,
                 'episode_id': episode.id
             }
             ep_list.append(new_ep)
@@ -55,7 +59,22 @@ def delete_episode(id):
     db.session.commit()
     return redirect(url_for('episodes'))
 
+@app.route('/writers')
+def writers():
+    episodes = Episode.query.all()
+    writers_list = []
+    for episode in episodes:
+        new_writer = {
+            'username': episode.writer.username,
+            'writer_id': episode.writer.id,
+        }
+        if new_writer not in writers_list:
+            writers_list.append(new_writer)
+    return {
+        "writers": writers_list
+        }
 
+    
 #########################################################################
 #  USER REGISTRATION/LOGIN/LOGOUT amd WRITERS
 #########################################################################
@@ -93,7 +112,7 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return 'you are registered AND logged in. Go to the index.'
+        return {"data": "you are registered AND logged in. Go to the index."}
     form = RegistrationForm(meta={'csrf': False} )
     data = request.json
     print("Data 1:", data)
@@ -105,5 +124,5 @@ def register():
         db.session.add(user)
         db.session.commit()
         print('congratulations!! you are now a registered user!!!!')
-        return "you are registered. now, go login"
-    return "please check your information and try again"
+        return {"data": "you are registered. now, go login"}
+    return {"data": "please check your information and try again"}
