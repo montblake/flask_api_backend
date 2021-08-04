@@ -64,10 +64,10 @@ def delete_episode(id):
 def edit_episode(id):
     episode = Episode.query.get(id)
     form = EditEpisodeForm()
-    print(form.title.data)
+    # print(form.title.data)
     episode.title = form.title.data
     episode.plot = form.plot.data
-    print("ep title:", episode.title)
+    # print("ep title:", episode.title)
     db.session.commit()  
     return redirect(url_for('episodes'))
 
