@@ -64,6 +64,7 @@ def delete_episode(id):
 def edit_episode(id):
     episode = Episode.query.get(id)
     form = EditEpisodeForm()
+    print(form)
     if form.validate_on_submit():
         episode.title = form.title.data
         episode.plot = form.plot.data
