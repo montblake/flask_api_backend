@@ -65,13 +65,11 @@ def update_episode(id):
     print('HERE I AM UPDATING>>>')
     print("Request received. Processing...")
     req = request.get_json()
-    print(req)
     episode = Episode.query.get(id)
-    print("episode:",episode);
-    # episode.title = req.title
-    # episode.plot = req.plot
-    # db.session.commit()
-    # print("Episode Added")
+    episode.title = req.title
+    episode.plot = req.plot
+    db.session.commit()
+    print("Episode Added")
     return redirect(url_for('episodes'))
 
 
