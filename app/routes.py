@@ -59,6 +59,20 @@ def delete_episode(id):
     db.session.commit()
     return redirect(url_for('episodes'))
 
+
+@app.route('/episodes/<int:id>/update', methods=['POST'])
+def update_episode(id):
+    print('HERE I AM UPDATING>>>')
+    print("Request received. Processing...")
+    episode = Episode.query.get(id)
+    req = request.get_json()
+    episode.title = req.title
+    episode.plot = req.plot
+    db.session.commit()
+    print("Episode Added")
+    return redirect(url_for('episodes'))
+
+
 @app.route('/writers')
 def writers():
     episodes = Episode.query.all()
