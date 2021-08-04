@@ -67,6 +67,7 @@ def edit_episode(id):
     if form.validate_on_submit():
         episode.title = form.title.data
         episode.plot = form.plot.data
+        print("title:", episode.title)
         db.session.commit()  
     return redirect(url_for('episodes'))
 
