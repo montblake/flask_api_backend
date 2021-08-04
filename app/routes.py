@@ -64,12 +64,13 @@ def delete_episode(id):
 def update_episode(id):
     print('HERE I AM UPDATING>>>')
     print("Request received. Processing...")
-    episode = Episode.query.get(id)
+    # episode = Episode.query.get(id)
     req = request.get_json()
-    episode.title = req.title
-    episode.plot = req.plot
-    db.session.commit()
-    print("Episode Added")
+    print(req)
+    # episode.title = req.title
+    # episode.plot = req.plot
+    # db.session.commit()
+    # print("Episode Added")
     return redirect(url_for('episodes'))
 
 
