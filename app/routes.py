@@ -60,17 +60,16 @@ def delete_episode(id):
     return redirect(url_for('episodes'))
 
 
-@app.route('/episodes/<int:id>/update', methods=['POST'])
-def update_episode(id):
-    print('HERE I AM UPDATING>>>')
-    print("Request received. Processing...")
-    req = request.get_json()
+@app.route('/edit_episode/<int:id>/', methods=['POST'])
+def edit_episode(id):
     episode = Episode.query.get(id)
-    episode['title'] = req['title']
-    episode['plot'] = req['plot']
-    db.session.commit()
-    print("Episode Added")
+    form = EditEpisodeForm()
+    if form.validate_on_submit():
+        episode.title = form.title.data
+        episode.plot = form.plot.data
+        db.session.commit()  
     return redirect(url_for('episodes'))
+
 
 
 @app.route('/writers')
