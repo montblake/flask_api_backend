@@ -60,11 +60,11 @@ def delete_episode(id):
     return redirect(url_for('episodes'))
 
 
-@app.route('/edit_episode/<int:id>/', methods=['POST'])
+@app.route('/edit_episode/<int:id>/', methods=['GET','POST'])
 def edit_episode(id):
     episode = Episode.query.get(id)
     form = EditEpisodeForm()
-    print(form)
+    print(form.title.data)
     if form.validate_on_submit():
         episode.title = form.title.data
         episode.plot = form.plot.data
