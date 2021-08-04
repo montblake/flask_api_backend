@@ -65,11 +65,10 @@ def edit_episode(id):
     episode = Episode.query.get(id)
     form = EditEpisodeForm()
     print(form.title.data)
-    if form.validate_on_submit():
-        episode.title = form.title.data
-        episode.plot = form.plot.data
-        print("title:", episode.title)
-        db.session.commit()  
+    episode.title = form.title.data
+    episode.plot = form.plot.data
+    print("ep title:", episode.title)
+    db.session.commit()  
     return redirect(url_for('episodes'))
 
 
